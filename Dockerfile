@@ -38,7 +38,9 @@ WORKDIR /root
 RUN \
     apt-get update && \
     echo "Installing Ubuntu HandBrake repositories..." && \
-    apt -y install software-properties-common dirmngr apt-transport-https lsb-release ca-certificates && \
+    apt -y install software-properties-common \
+   # dirmngr apt-transport-https lsb-release ca-certificates 
+    && \
     add-apt-repository ppa:stebbins/handbrake-releases && \
     apt install -y ubuntu-restricted-addons && \
     apt update && \
@@ -124,7 +126,8 @@ RUN \
         find /opt/intel/mediasdk -type f -name "*.so*" -exec strip -s {} ';'; \
         strip -s /usr/bin/ghb; \
         strip -s /usr/bin/HandBrakeCLI; \
-    fi && \
+  #  fi && \
+        && \
     # Cleanup.
     del-pkg build-dependencies && \
     rm -r \
