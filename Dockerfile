@@ -67,6 +67,7 @@ RUN \
    # Download patches.
     echo "Downloading patches..." && \
     mkdir HandBrake && \
+    mkdir MediaSDK && \
     curl -# -L -o HandBrake/A00-hb-video-preset.patch https://raw.githubusercontent.com/jlesage/docker-handbrake/master/A00-hb-video-preset.patch && \
     curl -# -L -o MediaSDK/intel-media-sdk-debug-no-assert.patch https://raw.githubusercontent.com/jlesage/docker-handbrake/master/intel-media-sdk-debug-no-assert.patch && \
    # Install HandBrake.
