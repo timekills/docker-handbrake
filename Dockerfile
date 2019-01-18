@@ -34,6 +34,7 @@ ARG HANDBRAKE_DEBUG_MODE=none
 # Install dependencies.
 RUN \
     # Add repository for Handbrake Ubuntu.
+    apt update
     echo "Installing Ubuntu HandBrake repositories..." && \
     apt install -y software-properties-common && \
     add-apt-repository ppa:stebbins/handbrake-releases && \
