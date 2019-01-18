@@ -43,7 +43,8 @@ RUN \
     add-apt-repository ppa:stebbins/handbrake-releases && \
     apt install -y ubuntu-restricted-addons && \
     apt update && \
-    apt upgrade -y
+    DEBIAN_FRONTEND=noninteractive apt-get upgrade -q -y -u  -o \
+    Dpkg::Options::="--force-confdef" --allow-downgrades --allow-remove-essential --allow-change-held-packages --allow-change-held-packages --allow-unauthenticated
 
 # Define working directory.
 WORKDIR /tmp
