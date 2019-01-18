@@ -36,7 +36,7 @@ WORKDIR /tmp
 
 # Compile HandBrake, libva and Intel Media SDK.
 RUN \
-    add-pkg --virtual build-dependencies \
+    apt update && apt install \
         # build tools.
         curl \
         build-base \
