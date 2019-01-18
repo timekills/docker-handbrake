@@ -5,7 +5,7 @@
 #
 
 # Pull base image.
-FROM jlesage/baseimage-gui:alpine-3.8-v3.5.1
+FROM jlesage/baseimage-gui:ubuntu-18.04
 
 # Define software versions.
 # NOTE: x264 version 20171224 is the most recent one that doesn't crash.
