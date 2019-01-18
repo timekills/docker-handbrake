@@ -38,6 +38,7 @@ WORKDIR /tmp
 RUN \
     # Add repository for Handbrake Ubuntu.
     echo "Installing Ubuntu HandBrake repositories..." && \
+    install software-properties-common && \
     add-apt-repository ppa:stebbins/handbrake-releases && \
     apt install ubuntu-restricted-addons && \
     apt update && \
@@ -62,7 +63,6 @@ RUN \
                 --launch \
                 && \
     make --directory=build install && \
-    fi && \
     # Download helper.
     echo "Downloading helpers..." && \
     curl -# -L -o /tmp/run_cmd https://raw.githubusercontent.com/jlesage/docker-mgmt-tools/master/run_cmd && \
