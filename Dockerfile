@@ -38,9 +38,9 @@ WORKDIR /tmp
 RUN \
     # Add repository for Handbrake Ubuntu.
     echo "Installing Ubuntu HandBrake repositories..." && \
-    install software-properties-common && \
+    apt install -y software-properties-common && \
     add-apt-repository ppa:stebbins/handbrake-releases && \
-    apt install ubuntu-restricted-addons && \
+    apt install -y ubuntu-restricted-addons && \
     apt update && \
     # Download x264 sources.
     echo "installing dependancies..." && \
