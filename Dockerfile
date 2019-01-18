@@ -34,9 +34,8 @@ ARG HANDBRAKE_DEBUG_MODE=none
 # Define working directory.
 WORKDIR /root
 
-# Install dependencies.
+# Add repository for Handbrake Ubuntu.
 RUN \
-    # Add repository for Handbrake Ubuntu.
     apt-get update && \
     echo "Installing Ubuntu HandBrake repositories..." && \
     apt -y install software-properties-common dirmngr apt-transport-https lsb-release ca-certificates && \
@@ -53,13 +52,13 @@ WORKDIR /tmp
 RUN \
     echo "installing dependancies..." && \
     apt update && \
-    apt install autoconf automake build-essential \
+    apt install -y autoconf automake build-essential \
     cmake git libass-dev libbz2-dev libfontconfig1-dev libfreetype6-dev \
     libfribidi-dev libharfbuzz-dev libjansson-dev liblzma-dev libmp3lame-dev \
     libogg-dev libopus-dev libsamplerate-dev libspeex-dev libtheora-dev \
     libtool libtool-bin libvorbis-dev libx264-dev libxml2-dev m4 make nasm \
     patch pkg-config python tar yasm zlib1g-dev && \
-    apt install gstreamer1.0-libav intltool libappindicator-dev \
+    apt install -y gstreamer1.0-libav intltool libappindicator-dev \
     libdbus-glib-1-dev libglib2.0-dev libgstreamer1.0-dev \
     libgstreamer-plugins-base1.0-dev libgtk-3-dev libgudev-1.0-dev \
     libnotify-dev libwebkitgtk-3.0-dev && \
