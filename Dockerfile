@@ -31,18 +31,20 @@ ARG INTEL_MEDIA_SDK_URL=https://github.com/Intel-Media-SDK/MediaSDK/archive/inte
 # Set to 'max' to keep debug symbols.
 ARG HANDBRAKE_DEBUG_MODE=none
 
-# Define working directory.
-WORKDIR /tmp
-
-# Compile HandBrake, libva and Intel Media SDK.
+# Install dependencies.
 RUN \
     # Add repository for Handbrake Ubuntu.
     echo "Installing Ubuntu HandBrake repositories..." && \
     apt install -y software-properties-common && \
     add-apt-repository ppa:stebbins/handbrake-releases && \
     apt install -y ubuntu-restricted-addons && \
-    apt update && \
-    # Download x264 sources.
+    apt update
+
+# Define working directory.
+WORKDIR /tmp
+
+# Compile HandBrake, libva and Intel Media SDK.
+RUN \
     echo "installing dependancies..." && \
     install autoconf automake build-essential cmake git libass-dev libbz2-dev libfontconfig1-dev libfreetype6-dev libfribidi-dev libharfbuzz-dev libjansson-dev liblzma-dev libmp3lame-dev libogg-dev libopus-dev libsamplerate-dev libspeex-dev libtheora-dev libtool libtool-bin libvorbis-dev libx264-dev libxml2-dev m4 make nasm patch pkg-config python tar yasm zlib1g-dev && \
     install install gstreamer1.0-libav intltool libappindicator-dev libdbus-glib-1-dev libglib2.0-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgtk-3-dev libgudev-1.0-dev libnotify-dev libwebkitgtk-3.0-dev && \
