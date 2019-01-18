@@ -36,79 +36,32 @@ WORKDIR /tmp
 
 # Compile HandBrake, libva and Intel Media SDK.
 RUN \
-    apt update && apt install \
-        # build tools.
-        curl \
-        build-base \
-        yasm \
-        autoconf \
-        cmake \
-        automake \
-        libtool \
-        m4 \
-        patch \
-        coreutils \
-        tar \
-        file \
-        python \
-        linux-headers \
-        intltool \
-        git \
-        diffutils \
-        bash \
-        nasm \
-        # misc libraries
-        jansson-dev \
-        libxml2-dev \
-        libpciaccess-dev \
-        xz-dev \
-        # media libraries
-        libsamplerate-dev \
-        libass-dev \
-        # media codecs
-        libtheora-dev \
-        lame-dev \
-        opus-dev \
-        libvorbis-dev \
-        speex-dev \
-        # gtk
-        gtk+3.0-dev \
-        dbus-glib-dev \
-        libnotify-dev \
-        libgudev-dev \
-        && \
+    # Add repository for Handbrake Ubuntu.
+    echo "Installing Ubuntu HandBrake repositories..." && \
+    add-apt-repository ppa:stebbins/handbrake-releases && \
+    apt install ubuntu-restricted-addons && \
+    apt update && \
     # Download x264 sources.
-    echo "Downloading x264 sources..." && \
-    mkdir x264 && \
-    curl -# -L ${X264_URL} | tar xj --strip 1 -C x264 && \
-    # Download libva sources.
-    echo "Downloading libva sources..." && \
-    mkdir libva && \
-    curl -# -L ${LIBVA_URL} | tar xj --strip 1 -C libva && \
-    # Download Intel VAAPI driver sources.
-    echo "Downloading Intel VAAPI driver sources..." && \
-    mkdir intel-vaapi-driver && \
-    curl -# -L ${INTEL_VAAPI_DRIVER_URL} | tar xj --strip 1 -C intel-vaapi-driver && \
-    # Download gmmlib sources.
-    echo "Downloading gmmlib sources..." && \
-    mkdir gmmlib && \
-    curl -# -L ${GMMLIB_URL} | tar xz --strip 1 -C gmmlib && \
-    # Download Intel Media driver.
-    echo "Downloading Intel Media driver sources..." && \
-    mkdir intel-media-driver && \
-    curl -# -L ${INTEL_MEDIA_DRIVER_URL} | tar xz --strip 1 -C intel-media-driver && \
-    # Download Intel Media SDK sources.
-    echo "Downloading Intel Media SDK sources..." && \
-    mkdir MediaSDK && \
-    curl -# -L ${INTEL_MEDIA_SDK_URL} | tar xz --strip 1 -C MediaSDK && \
-    # Download HandBrake sources.
-    echo "Downloading HandBrake sources..." && \
-    if echo "${HANDBRAKE_URL}" | grep -q '\.git$'; then \
-        git clone ${HANDBRAKE_URL} HandBrake && \
-        git -C HandBrake checkout "${HANDBRAKE_VERSION}"; \
-    else \
-        mkdir HandBrake && \
-        curl -# -L ${HANDBRAKE_URL} | tar xj --strip 1 -C HandBrake; \
+    echo "installing dependancies..." && \
+    install autoconf automake build-essential cmake git libass-dev libbz2-dev libfontconfig1-dev libfreetype6-dev libfribidi-dev libharfbuzz-dev libjansson-dev liblzma-dev libmp3lame-dev libogg-dev libopus-dev libsamplerate-dev libspeex-dev libtheora-dev libtool libtool-bin libvorbis-dev libx264-dev libxml2-dev m4 make nasm patch pkg-config python tar yasm zlib1g-dev && \
+    install install gstreamer1.0-libav intltool libappindicator-dev libdbus-glib-1-dev libglib2.0-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgtk-3-dev libgudev-1.0-dev libnotify-dev libwebkitgtk-3.0-dev && \
+   # Install Intel i965 driver
+   apt install -y i965-va-driver && \
+   # Install HandBrake.
+    echo "Installing HandBrake for Ubuntu..." && \
+    git clone https://github.com/HandBrake/HandBrake.git && \
+    cd HandBrake && \
+    patch -p1 < A00-hb-video-preset.patch && \
+    ./configure --prefix=/usr \
+                --debug=$HANDBRAKE_DEBUG_MODE \
+                --disable-gtk-update-checks \
+                --enable-fdk-aac \
+                --enable-x265 \
+                --enable-qsv \
+                --launch-jobs=$(nproc) \
+                --launch \
+                && \
+    make --directory=build install && \
     fi && \
     # Download helper.
     echo "Downloading helpers..." && \
@@ -118,67 +71,6 @@ RUN \
     echo "Downloading patches..." && \
     curl -# -L -o HandBrake/A00-hb-video-preset.patch https://raw.githubusercontent.com/jlesage/docker-handbrake/master/A00-hb-video-preset.patch && \
     curl -# -L -o MediaSDK/intel-media-sdk-debug-no-assert.patch https://raw.githubusercontent.com/jlesage/docker-handbrake/master/intel-media-sdk-debug-no-assert.patch && \
-    curl -# -L -o intel-media-driver/media-driver-c-assert-fix.patch https://raw.githubusercontent.com/jlesage/docker-handbrake/master/media-driver-c-assert-fix.patch && \
-    # Compile x264.
-    echo "Compiling x264..." && \
-    cd x264 && \
-    if [ "${HANDBRAKE_DEBUG_MODE}" = "none" ]; then \
-        X264_CMAKE_OPTS=--enable-strip; \
-    else \
-        X264_CMAKE_OPTS=--enable-debug; \
-    fi && \
-    ./configure \
-        --prefix=/usr \
-        --enable-shared \
-        --enable-pic \
-        --disable-cli \
-        $X264_CMAKE_OPTS \
-        && \
-    make -j$(nproc) install && \
-    cd ../ && \
-    # Compile libva.
-    echo "Compiling libva..." && \
-    cd libva && \
-    ./configure \
-        --prefix=/usr \
-        --mandir=/tmp/libva-man \
-        --infodir=/tmp/liva-info \
-        --localstatedir=/var \
-        --enable-x11 \
-        --disable-glx \
-        --disable-wayland \
-        --disable-static \
-        --enable-shared \
-        --with-drivers-path=/opt/intel/mediasdk/lib64 \
-        && \
-    make -j$(nproc) && \
-    make install && \
-    cd ../ && \
-    # Compile Intel VAAPI driver.
-    echo "Compiling Intel VAAPI driver..." && \
-    cd intel-vaapi-driver && \
-    ./configure && \
-    make -j$(nproc) && \
-    make install && \
-    cd .. && \
-    # Compile Intel Media driver.
-    echo "Compiling Intel Media driver..." && \
-    add-pkg libexecinfo-dev && \
-    cd intel-media-driver && \
-    patch -p1 < media-driver-c-assert-fix.patch && \
-    mkdir build && cd build && \
-    cmake \
-        -Wno-dev \
-        -DBUILD_TYPE=Release \
-        -DCMAKE_INSTALL_PREFIX=/opt/intel/mediasdk \
-        -DLIBVA_DRIVERS_PATH=/opt/intel/mediasdk/lib64 \
-        -DINSTALL_DRIVER_SYSCONF=OFF \
-        -DMEDIA_RUN_TEST_SUITE=OFF \
-        ../ && \
-    make -j$(nproc) && \
-    make install && \
-    cd .. && \
-    cd .. && \
     # Compile Intel Media SDK.
     echo "Compiling Intel Media SDK..." && \
     cd MediaSDK && \
@@ -207,21 +99,6 @@ RUN \
     make -j$(nproc) install && \
     cd .. && \
     cd .. && \
-    # Compile HandBrake.
-    echo "Compiling HandBrake..." && \
-    cd HandBrake && \
-    patch -p1 < A00-hb-video-preset.patch && \
-    ./configure --prefix=/usr \
-                --debug=$HANDBRAKE_DEBUG_MODE \
-                --disable-gtk-update-checks \
-                --enable-fdk-aac \
-                --enable-x265 \
-                --enable-qsv \
-                --launch-jobs=$(nproc) \
-                --launch \
-                && \
-    /tmp/run_cmd -i 600 -m "HandBrake still compiling..." make --directory=build install && \
-    cd .. && \
     # Strip symbols.
     if [ "${HANDBRAKE_DEBUG_MODE}" = "none" ]; then \
         find /usr/lib -type f -name "libva*.so*" -exec strip -s {} ';'; \
@@ -246,7 +123,7 @@ RUN \
 
 # Install dependencies.
 RUN \
-    add-pkg \
+    apt add \
         gtk+3.0 \
         libgudev \
         dbus-glib \
@@ -306,5 +183,5 @@ LABEL \
       org.label-schema.name="handbrake" \
       org.label-schema.description="Docker container for HandBrake" \
       org.label-schema.version="unknown" \
-      org.label-schema.vcs-url="https://github.com/jlesage/docker-handbrake" \
+      org.label-schema.vcs-url="https://github.com/timekills/docker-handbrake" \
       org.label-schema.schema-version="1.0"
