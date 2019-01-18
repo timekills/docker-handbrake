@@ -36,7 +36,7 @@ RUN \
     # Add repository for Handbrake Ubuntu.
     apt update
     echo "Installing Ubuntu HandBrake repositories..." && \
-    apt install -y software-properties-common && \
+    apt -y install software-properties-common dirmngr apt-transport-https lsb-release ca-certificates && \
     add-apt-repository ppa:stebbins/handbrake-releases && \
     apt install -y ubuntu-restricted-addons && \
     apt update
