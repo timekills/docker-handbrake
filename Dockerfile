@@ -1,7 +1,7 @@
 #
 # handbrake Dockerfile
 #
-# https://github.com/jlesage/docker-handbrake
+# Original sourrce: https://github.com/jlesage/docker-handbrake
 #
 
 # Pull base image.
