@@ -68,13 +68,13 @@ RUN \
     echo "Downloading patches..." && \
     mkdir HandBrake && \
     mkdir MediaSDK && \
-    curl -# -L -o HandBrake/A00-hb-video-preset.patch https://raw.githubusercontent.com/jlesage/docker-handbrake/master/A00-hb-video-preset.patch && \
+    #curl -# -L -o HandBrake/A00-hb-video-preset.patch https://raw.githubusercontent.com/jlesage/docker-handbrake/master/A00-hb-video-preset.patch && \
     curl -# -L -o MediaSDK/intel-media-sdk-debug-no-assert.patch https://raw.githubusercontent.com/jlesage/docker-handbrake/master/intel-media-sdk-debug-no-assert.patch && \
    # Install HandBrake.
     echo "Installing HandBrake for Ubuntu..." && \
     git clone https://github.com/HandBrake/HandBrake.git && \
     cd HandBrake && \
-    patch -p1 < A00-hb-video-preset.patch && \
+   # patch -p1 < A00-hb-video-preset.patch && \
     ./configure --prefix=/usr \
                 --debug=$HANDBRAKE_DEBUG_MODE \
                 --disable-gtk-update-checks \
