@@ -31,10 +31,13 @@ ARG INTEL_MEDIA_SDK_URL=https://github.com/Intel-Media-SDK/MediaSDK/archive/inte
 # Set to 'max' to keep debug symbols.
 ARG HANDBRAKE_DEBUG_MODE=none
 
+# Define working directory.
+WORKDIR /root
+
 # Install dependencies.
 RUN \
     # Add repository for Handbrake Ubuntu.
-    apt update
+    apt-get update && \
     echo "Installing Ubuntu HandBrake repositories..." && \
     apt -y install software-properties-common dirmngr apt-transport-https lsb-release ca-certificates && \
     add-apt-repository ppa:stebbins/handbrake-releases && \
