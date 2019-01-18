@@ -63,7 +63,11 @@ RUN \
     libgstreamer-plugins-base1.0-dev libgtk-3-dev libgudev-1.0-dev \
     libnotify-dev libwebkitgtk-3.0-dev && \
    # Install Intel i965 driver
-   apt install -y i965-va-driver && \
+    apt install -y i965-va-driver && \
+   # Download patches.
+    echo "Downloading patches..." && \
+    curl -# -L -o HandBrake/A00-hb-video-preset.patch https://raw.githubusercontent.com/jlesage/docker-handbrake/master/A00-hb-video-preset.patch && \
+    curl -# -L -o MediaSDK/intel-media-sdk-debug-no-assert.patch https://raw.githubusercontent.com/jlesage/docker-handbrake/master/intel-media-sdk-debug-no-assert.patch && \
    # Install HandBrake.
     echo "Installing HandBrake for Ubuntu..." && \
     git clone https://github.com/HandBrake/HandBrake.git && \
@@ -83,10 +87,6 @@ RUN \
     echo "Downloading helpers..." && \
     curl -# -L -o /tmp/run_cmd https://raw.githubusercontent.com/jlesage/docker-mgmt-tools/master/run_cmd && \
     chmod +x /tmp/run_cmd && \
-    # Download patches.
-    echo "Downloading patches..." && \
-    curl -# -L -o HandBrake/A00-hb-video-preset.patch https://raw.githubusercontent.com/jlesage/docker-handbrake/master/A00-hb-video-preset.patch && \
-    curl -# -L -o MediaSDK/intel-media-sdk-debug-no-assert.patch https://raw.githubusercontent.com/jlesage/docker-handbrake/master/intel-media-sdk-debug-no-assert.patch && \
     # Compile Intel Media SDK.
     echo "Compiling Intel Media SDK..." && \
     cd MediaSDK && \
