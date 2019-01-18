@@ -81,12 +81,7 @@ RUN \
                 --disable-gtk-update-checks \
                 --enable-fdk-aac \
                 --enable-x265 \
-                --enable-vaapi \
-                --enable-hwaccels \
                 --enable-qsv \
-                --disable-nvenc \
-                --disable-encoder=h264_nvenc \
-                --disable-encoder=hevc_nvenc\
                 --launch-jobs=$(nproc) \
                 --launch \
                 && \
