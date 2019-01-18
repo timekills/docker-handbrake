@@ -67,6 +67,7 @@ RUN \
    # Download patches.
     echo "Downloading patches..." && \
     mkdir HandBrake && \
+    mkdir HandBrakeCLI && \
     mkdir MediaSDK && \
     #curl -# -L -o HandBrake/A00-hb-video-preset.patch https://raw.githubusercontent.com/jlesage/docker-handbrake/master/A00-hb-video-preset.patch && \
     curl -# -L -o MediaSDK/intel-media-sdk-debug-no-assert.patch https://raw.githubusercontent.com/jlesage/docker-handbrake/master/intel-media-sdk-debug-no-assert.patch && \
@@ -80,7 +81,12 @@ RUN \
                 --disable-gtk-update-checks \
                 --enable-fdk-aac \
                 --enable-x265 \
+                --enable-vaapi \
+                --enable-hwaccels \
                 --enable-qsv \
+                --disable-nvenc \
+                --disable-encoder=h264_nvenc \
+                --disable-encoder=hevc_nvenc\
                 --launch-jobs=$(nproc) \
                 --launch \
                 && \
